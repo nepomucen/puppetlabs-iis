@@ -1,0 +1,15 @@
+HOSTS:
+  win-2008R2-std:
+    roles:
+      - agent
+      - default
+    platform: windows-server-amd64
+    box: szymon-win2008r2x64
+    hypervisor: vagrant
+    user: vagrant
+    ip: '10.255.33.129'
+    is_cygwin: false
+    communicator: bitvise
+CONFIG:
+  log_level: verbose
+  type: git
