@@ -58,6 +58,24 @@ RSpec.configure do |c|
     unless ENV['BEAKER_TESTMODE'] == 'local' || ENV['BEAKER_provision'] == 'no'
       windows_hosts = hosts.select { |host| host.platform =~ /windows/i }
       install_module_from_forge_on(windows_hosts, 'puppetlabs/dism', '>= 1.2.0')
+      # Install PS3 via Chocolatey
+      install_module_from_forge_on(windows_hosts, 'puppetlabs/chocolatey', '>= 3.0.0')
+      prereq_manifest = <<-EOS
+        service {'wuauserv':
+          enable  =>  'manual',
+        }
+
+        include chocolatey;
+
+        dism { 'NetFx3': ensure => present }
+ 
+        package {'powershell':
+          ensure   => '4.0.20141001',
+          provider => chocolatey,
+        }
+      EOS
+      apply_manifest_on(windows_hosts, prereq_manifest)
+      
       pp = "dism { ['IIS-WebServerRole','IIS-WebServer', 'IIS-WebServerManagementTools']: ensure => present }"
       apply_manifest_on(windows_hosts, pp)
     end
