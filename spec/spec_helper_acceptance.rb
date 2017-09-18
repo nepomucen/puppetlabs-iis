@@ -62,7 +62,7 @@ RSpec.configure do |c|
       install_module_from_forge_on(windows_hosts, 'puppetlabs/chocolatey', '>= 3.0.0')
       install_module_from_forge_on(windows_hosts, 'puppetlabs/reboot', '1.2.1')
       prereq_manifest = <<-EOS
-        #include chocolatey;
+        include chocolatey;
 
         package {'Microsoft .NET Framework 4.6.1':
           ensure  => '4.6.01055',
@@ -71,11 +71,11 @@ RSpec.configure do |c|
           notify => Reboot['after_run'],
         }
  
-        #package {'powershell':
-        #  ensure   => '4.0.20141001',
-        #  provider => chocolatey,
-        #  notify => Reboot['after_run'],
-        #}
+        package {'powershell':
+          ensure   => '4.0.20141001',
+          provider => chocolatey,
+          notify => Reboot['after_run'],
+        }
 
         reboot { 'after_run':
           apply  => finished,
