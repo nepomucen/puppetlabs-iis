@@ -60,18 +60,25 @@ RSpec.configure do |c|
       install_module_from_forge_on(windows_hosts, 'puppetlabs/dism', '>= 1.2.0')
       # Install PS3 via Chocolatey
       install_module_from_forge_on(windows_hosts, 'puppetlabs/chocolatey', '>= 3.0.0')
+      install_module_from_forge_on(windows_hosts, 'puppetlabs/reboot', '1.2.1')
       prereq_manifest = <<-EOS
-        service {'wuauserv':
-          enable  =>  'manual',
+        #include chocolatey;
+
+        package {'Microsoft .NET Framework 4.6.1':
+          ensure  => '4.6.01055',
+          source  => 'c:/packages/NDP461-KB3102436-x86-x64-AllOS-ENU.exe',
+          install_options  => ['/q', '/norestart'],
+          notify => Reboot['after_run'],
         }
-
-        include chocolatey;
-
-        dism { 'NetFx3': ensure => present }
  
-        package {'powershell':
-          ensure   => '4.0.20141001',
-          provider => chocolatey,
+        #package {'powershell':
+        #  ensure   => '4.0.20141001',
+        #  provider => chocolatey,
+        #  notify => Reboot['after_run'],
+        #}
+
+        reboot { 'after_run':
+          apply  => finished,
         }
       EOS
       apply_manifest_on(windows_hosts, prereq_manifest)
