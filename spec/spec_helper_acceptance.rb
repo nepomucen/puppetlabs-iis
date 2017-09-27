@@ -70,6 +70,10 @@ RSpec.configure do |c|
           install_options  => ['/q', '/norestart'],
           notify => Reboot['after_run'],
         }
+
+        service {'wuauserv':
+          enable  =>  'manual',
+        }
  
         package {'powershell':
           ensure   => '4.0.20141001',
